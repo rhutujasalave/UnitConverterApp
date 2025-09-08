@@ -4,21 +4,24 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.unitconverterapp.ui.theme.UnitConverterAppTheme
+import com.example.unitconverterapp.compose.BaseScreen
+import com.example.unitconverterapp.data.ConverterDatabase
+import com.example.unitconverterapp.data.ConverterRepository
+import com.example.unitconverterapp.data.ConverterRepositoryImpl
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var factory : ConverterViewModelFactory
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContent {
-          BaseScreen()
+            BaseScreen(factory = factory)
         }
     }
 }

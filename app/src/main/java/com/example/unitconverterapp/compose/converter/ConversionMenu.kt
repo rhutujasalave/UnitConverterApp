@@ -1,4 +1,4 @@
-package com.example.unitconverterapp
+package com.example.unitconverterapp.compose.converter
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -25,14 +26,19 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-
+import com.example.unitconverterapp.data.Conversion
 
 @Composable
-fun ConversionMenu(list: List<Conversion>, modifier: Modifier = Modifier,convert : (Conversion)->Unit) {
+fun ConversionMenu(
+    list: List<Conversion>,
+    isLandscape : Boolean,
+    modifier: Modifier = Modifier,
+    convert: (Conversion) -> Unit
+) {
 
     // instead of = property by kotlin (by)
     //remember provide letest value
-    var displayText by remember { mutableStateOf("select the conversion type") }
+    var displayText by rememberSaveable { mutableStateOf("select the conversion type") }  //used remembersavable bcoz after rotate screen stick to which we select conversion
     var textFieldSize by remember { mutableStateOf(Size.Zero) }  //to assign dropdown menu the same width as textfield
     var expanded by remember { mutableStateOf(false) }
     val icon = if (expanded)
@@ -41,21 +47,44 @@ fun ConversionMenu(list: List<Conversion>, modifier: Modifier = Modifier,convert
         Icons.Filled.KeyboardArrowDown
 
     Column {
-        OutlinedTextField(
-            value = displayText,
-            onValueChange = { displayText = it },
-            textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
-            modifier = modifier.fillMaxWidth()
-                .onGloballyPositioned { cordinates ->
-                    textFieldSize = cordinates.size.toSize()
+        if ( isLandscape) {               //side by side shows after rotate as landscape
+
+            OutlinedTextField(
+                value = displayText,
+                onValueChange = { displayText = it },
+                textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                modifier = modifier
+                    .onGloballyPositioned { cordinates ->
+                        textFieldSize = cordinates.size.toSize()
+                    },
+                label = { Text(text = "conversion Type") },
+                trailingIcon = {
+                    Icon(icon, contentDescription = "icon",
+                        modifier.clickable { expanded = !expanded })
                 },
-            label = { Text(text = "conversion Type") },
-            trailingIcon = {
-                Icon(icon, contentDescription = "icon",
-                    modifier.clickable { expanded = !expanded })
-            },
-            readOnly = true
-        )
+                readOnly = true
+            )
+        }
+        else{
+
+            OutlinedTextField(
+                value = displayText,
+                onValueChange = { displayText = it },
+                textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { cordinates ->
+                        textFieldSize = cordinates.size.toSize()
+                    },
+                label = { Text(text = "conversion Type") },
+                trailingIcon = {
+                    Icon(icon, contentDescription = "icon",
+                        modifier.clickable { expanded = !expanded })
+                },
+                readOnly = true
+            )
+
+        }
 
 //    DropdownMenu(expanded = expanded,
 //        onDismissRequest = {expanded = false},
